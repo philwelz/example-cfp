@@ -1,12 +1,11 @@
 name: Build & Publish to Registry
 
 on:
+  workflow_dispatch:
   push:
-    branches:
-      - master
-      - main
-      - 'update/*'
-      - 'feature/*'
+    paths:
+      - 'example/**'
+      - '!.github/**'
 
 env:
   REGISTRY: ghcr.io

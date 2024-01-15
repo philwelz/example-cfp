@@ -1,6 +1,7 @@
 name: Patch & Publish to Registry
 
 on:
+  workflow_dispatch:
   registry_package:
     types: [published]
 
