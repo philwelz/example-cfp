@@ -67,7 +67,7 @@ jobs:
         with:
           image: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.COMMIT_SHORT_SHA }}
           image-report: 'report.json'
-          patched-tag: '${{ env.TAG }}-patched'
+          patched-tag: '${{ env.COMMIT_SHORT_SHA }}-patched'
           # https://github.com/moby/buildkit
           buildkit-version: 'v0.12.4'
           # https://github.com/project-copacetic/copacetic
