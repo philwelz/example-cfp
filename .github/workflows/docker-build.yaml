@@ -17,7 +17,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@master
+      - name: Checkout code
+        uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
         id: buildx
@@ -38,6 +39,7 @@ jobs:
         with:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
+          sbom: true
           context: ./example
           file: ./example/Dockerfile
           build-args: VERSION_FOLDER=fred-version
