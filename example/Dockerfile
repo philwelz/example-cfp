@@ -31,8 +31,6 @@ RUN dotnet publish \
   -c Release \
   -o ./output
 
-
-
 #FROM mcr.microsoft.com/dotnet/aspnet:$VERSION
 FROM mcr.microsoft.com/dotnet/runtime-deps:$VERSION
 RUN adduser \
