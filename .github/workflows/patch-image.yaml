@@ -1,0 +1,64 @@
+on:
+  registry_package:
+    types: [published]
+
+env:
+  REGISTRY: ghcr.io
+  ORGANISATION_NAME: philwelz
+  TAG: ${{ github.sha }}
+
+jobs:
+    patch-image:
+        runs-on: ubuntu-latest
+
+        steps:
+        - name: Set up Docker Buildx
+          # https://github.com/docker/setup-buildx-action
+          uses: docker/setup-buildx-action@v3.0.0
+
+        - name: Generate Trivy Report
+          # https://github.com/aquasecurity/trivy-action/tree/0.16.1
+          uses: aquasecurity/trivy-action@v0.16.1
+          with:
+            scan-type: 'image'
+            format: 'json'
+            output: 'report.json'
+            ignore-unfixed: true
+            vuln-type: 'os'
+            image-ref: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.TAG }}
+
+        - name: Check Vuln Count
+          id: vuln_count
+          run: |
+            report_file="report.json"
+            vuln_count=$(jq '.Results | length' "$report_file")
+            echo "vuln_count=$vuln_count" >> $GITHUB_OUTPUT
+
+        - name: Copa Action
+          if: steps.vuln_count.outputs.vuln_count != '0'
+          id: copa
+          # https://github.com/project-copacetic/copa-action
+          uses: project-copacetic/copa-action@v1.0.1
+          with:
+            image: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.TAG }}
+            image-report: 'report.json'
+            patched-tag: 'patched'
+            # https://github.com/moby/buildkit
+            buildkit-version: 'v0.12.4'
+            # https://github.com/project-copacetic/copacetic
+            copa-version: '0.6.0'
+
+        - name: Login to Docker Hub
+          if: steps.copa.conclusion == 'success'
+          id: login
+          # https://github.com/docker/login-action
+          uses: docker/login-action@v3.0.0
+          with:
+            registry: ${{ env.REGISTRY }}
+            username: ${{ github.actor }}
+            password: ${{ secrets.GITHUB_TOKEN }}
+
+        - name: Docker Push Patched Image
+          if: steps.login.conclusion == 'success'
+          run: |
+            docker push ${{ steps.copa.outputs.patched-image }}
