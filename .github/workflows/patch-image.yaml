@@ -1,3 +1,5 @@
+name: Patch & Publish to Registry
+
 on:
   registry_package:
     types: [published]

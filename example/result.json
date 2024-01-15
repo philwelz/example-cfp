@@ -1,0 +1,61 @@
+
+copa:test (alpine 3.14.6)
+=========================
+Total: 16 (UNKNOWN: 0, LOW: 0, MEDIUM: 6, HIGH: 9, CRITICAL: 1)
+
+┌──────────────┬────────────────┬──────────┬────────┬───────────────────┬───────────────┬─────────────────────────────────────────────────────────────┐
+│   Library    │ Vulnerability  │ Severity │ Status │ Installed Version │ Fixed Version │                            Title                            │
+├──────────────┼────────────────┼──────────┼────────┼───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ libcom_err   │ CVE-2022-1304  │ HIGH     │ fixed  │ 1.46.2-r0         │ 1.46.2-r1     │ e2fsprogs: out-of-bounds read/write via crafted filesystem  │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2022-1304                   │
+├──────────────┼────────────────┤          │        ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ libcrypto1.1 │ CVE-2022-4450  │          │        │ 1.1.1n-r0         │ 1.1.1t-r0     │ openssl: double free after calling PEM_read_bio_ex          │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2022-4450                   │
+│              ├────────────────┤          │        │                   │               ├─────────────────────────────────────────────────────────────┤
+│              │ CVE-2023-0215  │          │        │                   │               │ openssl: use-after-free following BIO_new_NDEF              │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2023-0215                   │
+│              ├────────────────┤          │        │                   │               ├─────────────────────────────────────────────────────────────┤
+│              │ CVE-2023-0286  │          │        │                   │               │ openssl: X.400 address type confusion in X.509 GeneralName  │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2023-0286                   │
+│              ├────────────────┤          │        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│              │ CVE-2023-0464  │          │        │                   │ 1.1.1t-r1     │ openssl: Denial of service by excessive resource usage in   │
+│              │                │          │        │                   │               │ verifying X509 policy...                                    │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2023-0464                   │
+│              ├────────────────┼──────────┤        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│              │ CVE-2022-2097  │ MEDIUM   │        │                   │ 1.1.1q-r0     │ openssl: AES OCB fails to encrypt some bytes                │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2022-2097                   │
+│              ├────────────────┤          │        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│              │ CVE-2022-4304  │          │        │                   │ 1.1.1t-r0     │ openssl: timing attack in RSA Decryption implementation     │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2022-4304                   │
+│              ├────────────────┤          │        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│              │ CVE-2023-0465  │          │        │                   │ 1.1.1t-r2     │ openssl: Invalid certificate policies in leaf certificates  │
+│              │                │          │        │                   │               │ are silently ignored                                        │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2023-0465                   │
+├──────────────┼────────────────┼──────────┤        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│ libssl1.1    │ CVE-2022-4450  │ HIGH     │        │                   │ 1.1.1t-r0     │ openssl: double free after calling PEM_read_bio_ex          │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2022-4450                   │
+│              ├────────────────┤          │        │                   │               ├─────────────────────────────────────────────────────────────┤
+│              │ CVE-2023-0215  │          │        │                   │               │ openssl: use-after-free following BIO_new_NDEF              │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2023-0215                   │
+│              ├────────────────┤          │        │                   │               ├─────────────────────────────────────────────────────────────┤
+│              │ CVE-2023-0286  │          │        │                   │               │ openssl: X.400 address type confusion in X.509 GeneralName  │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2023-0286                   │
+│              ├────────────────┤          │        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│              │ CVE-2023-0464  │          │        │                   │ 1.1.1t-r1     │ openssl: Denial of service by excessive resource usage in   │
+│              │                │          │        │                   │               │ verifying X509 policy...                                    │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2023-0464                   │
+│              ├────────────────┼──────────┤        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│              │ CVE-2022-2097  │ MEDIUM   │        │                   │ 1.1.1q-r0     │ openssl: AES OCB fails to encrypt some bytes                │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2022-2097                   │
+│              ├────────────────┤          │        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│              │ CVE-2022-4304  │          │        │                   │ 1.1.1t-r0     │ openssl: timing attack in RSA Decryption implementation     │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2022-4304                   │
+│              ├────────────────┤          │        │                   ├───────────────┼─────────────────────────────────────────────────────────────┤
+│              │ CVE-2023-0465  │          │        │                   │ 1.1.1t-r2     │ openssl: Invalid certificate policies in leaf certificates  │
+│              │                │          │        │                   │               │ are silently ignored                                        │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2023-0465                   │
+├──────────────┼────────────────┼──────────┤        ├───────────────────┼───────────────┼─────────────────────────────────────────────────────────────┤
+│ zlib         │ CVE-2022-37434 │ CRITICAL │        │ 1.2.12-r0         │ 1.2.12-r2     │ zlib: heap-based buffer over-read and overflow in inflate() │
+│              │                │          │        │                   │               │ in inflate.c via a...                                       │
+│              │                │          │        │                   │               │ https://avd.aquasec.com/nvd/cve-2022-37434                  │
+└──────────────┴────────────────┴──────────┴────────┴───────────────────┴───────────────┴─────────────────────────────────────────────────────────────┘
