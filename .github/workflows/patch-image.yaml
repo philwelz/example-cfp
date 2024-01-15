@@ -21,7 +21,8 @@ jobs:
 
         - name: Generate Trivy Report
           # https://github.com/aquasecurity/trivy-action/tree/0.16.1
-          uses: aquasecurity/trivy-action@v0.16.1
+          # Todo versioning
+          uses: aquasecurity/trivy-action@master
           with:
             scan-type: 'image'
             format: 'json'
