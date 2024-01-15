@@ -3,8 +3,6 @@
 
 ARG VERSION=6.0-alpine3.14
 
-
-
 FROM mcr.microsoft.com/dotnet/sdk:$VERSION AS build-env
 ARG VERSION_FOLDER="fred-version"
 WORKDIR /app
