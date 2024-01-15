@@ -42,6 +42,14 @@ jobs:
         vuln_count=$(jq '.Results | length' "$report_file")
         echo "vuln_count=$vuln_count" >> $GITHUB_OUTPUT
 
+    - name: Login to GitHub Container Registry
+      id: login
+      uses: docker/login-action@v3.0.0
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ github.token }}
+
     - name: Copa Action
       if: steps.vuln_count.outputs.vuln_count != '0'
       id: copa
@@ -55,15 +63,6 @@ jobs:
         buildkit-version: 'v0.12.4'
         # https://github.com/project-copacetic/copacetic
         copa-version: '0.6.0'
-
-    - name: Login to GitHub Container Registry
-      if: steps.copa.conclusion == 'success'
-      id: login
-      uses: docker/login-action@v3.0.0
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ github.token }}
 
     - name: Docker Push Patched Image
       if: steps.login.conclusion == 'success'
