@@ -46,5 +46,5 @@ ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 \
   ASPNETCORE_URLS=http://+:8080
 
 EXPOSE 8080
-# test 2
+# test 3
 ENTRYPOINT ["./sample-mvc", "--urls", "http://0.0.0.0:8080"]

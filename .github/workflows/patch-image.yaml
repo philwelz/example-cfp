@@ -82,25 +82,30 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      # - name: Docker Push Patched Image
-      #   if: steps.login.conclusion == 'success'
-      #   id: push
-      #   run: |
-      #     docker push ${{ steps.copa.outputs.patched-image }}
-
-      - name: Push patched Image
+      - name: Docker Push Patched Image
         if: steps.login.conclusion == 'success'
         id: push
-        # https://github.com/docker/build-push-action
-        uses: docker/build-push-action@v5.1.0
-        with:
-          push: true
-          sbom: true
-          tags: ${{ steps.copa.outputs.patched-image }}
+        run: |
+          docker push ${{ steps.copa.outputs.patched-image }} --attest=type=sbom
+
+      - name: Docker get image digest
+        if: steps.login.conclusion == 'success'
+        id: image
+        run: |
+          apt-get update && apt-get install -y jq
+          echo "digest=$(docker image inspect ${{ steps.copa.outputs.patched-image }} | jq -r '.[0].RepoDigests[0]')" >> $GITHUB_OUTPUT
 
       - name: Cosign sign the image with GitHub OIDC Token
         env:
-          DIGEST: ${{ steps.push.outputs.digest }}
+          DIGEST: ${{ steps.image.outputs.digest }}
           TAG: ${{ steps.copa.outputs.patched-image }}
         run: |
           cosign sign --yes ${TAG}@${DIGEST}
+
+      # - name: Cosign sign the image with GitHub OIDC Token
+      #   env:
+      #     DIGEST: ${{ steps.push.outputs.digest }}
+      #     TAG: ${{ steps.copa.outputs.patched-image }}
+      #   run: |
+      #     cosign attach sbom --sbom latest.spdx ${TAG}@${DIGEST}
+
