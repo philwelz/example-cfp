@@ -31,7 +31,7 @@ jobs:
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
-          password: ${{ env.GITHUB_TOKEN }}
+          password: $GITHUB_TOKEN
 
       - name: Build and push the fred version of the WebApp
         # https://github.com/docker/build-push-action
