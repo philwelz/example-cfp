@@ -8,7 +8,6 @@ on:
 env:
   REGISTRY: ghcr.io
   ORGANISATION_NAME: philwelz
-  TAG: ${{ github.sha }}
 
 jobs:
   patch-image:
@@ -20,6 +19,12 @@ jobs:
       id-token: write # needed for signing the images with GitHub OIDC Token
 
     steps:
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+
       - name: Install Cosign
         # https://github.com/sigstore/cosign-installer
         uses: sigstore/cosign-installer@v3.3.0
@@ -38,7 +43,7 @@ jobs:
           output: 'report.json'
           ignore-unfixed: true
           vuln-type: 'os'
-          image-ref: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.TAG }}
+          image-ref: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.COMMIT_SHORT_SHA }}
         # needed for private repos
         env:
           TRIVY_USERNAME: ${{ github.actor }}
@@ -59,7 +64,7 @@ jobs:
         with:
           image: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.TAG }}
           image-report: 'report.json'
-          patched-tag: 'patched'
+          patched-tag: '${{ env.TAG }}-patched'
           # https://github.com/moby/buildkit
           buildkit-version: 'v0.12.4'
           # https://github.com/project-copacetic/copacetic
@@ -74,19 +79,25 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Docker Push Patched Image
+      # - name: Docker Push Patched Image
+      #   if: steps.login.conclusion == 'success'
+      #   id: push
+      #   run: |
+      #     docker push ${{ steps.copa.outputs.patched-image }}
+
+      - name: Push patched Image
         if: steps.login.conclusion == 'success'
         id: push
-        run: |
-          docker push ${{ steps.copa.outputs.patched-image }}
+        # https://github.com/docker/build-push-action
+        uses: docker/build-push-action@v5.1.0
+        with:
+          push: true
+          sbom: true
+          tags: ${{ steps.copa.outputs.patched-image }}
 
-      - name: Sign the images with GitHub OIDC Token
+      - name: Sign the image with GitHub OIDC Token
         env:
           DIGEST: ${{ steps.push.outputs.digest }}
-          TAGS: ${{ steps.copa.outputs.patched-image }}
+          TAG: ${{ steps.copa.outputs.patched-image }}
         run: |
-          images=""
-          for tag in ${TAGS}; do
-            images+="${tag}@${DIGEST} "
-          done
-          cosign sign --yes ${images}
+          cosign sign --yes ${TAG}@${DIGEST}
