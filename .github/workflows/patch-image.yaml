@@ -58,7 +58,7 @@ jobs:
           with:
             registry: ${{ env.REGISTRY }}
             username: ${{ github.actor }}
-            password: ${{ env.GITHUB_TOKEN }}
+            password: ${{ github.token }}
 
         - name: Docker Push Patched Image
           if: steps.login.conclusion == 'success'
