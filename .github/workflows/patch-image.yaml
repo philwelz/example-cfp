@@ -86,7 +86,7 @@ jobs:
         if: steps.login.conclusion == 'success'
         id: push
         run: |
-          docker push ${{ steps.copa.outputs.patched-image }} --attest=type=sbom
+          docker push ${{ steps.copa.outputs.patched-image }}
 
       - name: Docker get image digest
         if: steps.login.conclusion == 'success'
