@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-        
+
       - name: Set short git commit SHA
         id: vars
         run: |
@@ -65,7 +65,7 @@ jobs:
         # https://github.com/project-copacetic/copa-action
         uses: project-copacetic/copa-action@v1.0.1
         with:
-          image: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.TAG }}
+          image: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.COMMIT_SHORT_SHA }}
           image-report: 'report.json'
           patched-tag: '${{ env.TAG }}-patched'
           # https://github.com/moby/buildkit
@@ -98,7 +98,7 @@ jobs:
           sbom: true
           tags: ${{ steps.copa.outputs.patched-image }}
 
-      - name: Sign the image with GitHub OIDC Token
+      - name: Cosign sign the image with GitHub OIDC Token
         env:
           DIGEST: ${{ steps.push.outputs.digest }}
           TAG: ${{ steps.copa.outputs.patched-image }}
