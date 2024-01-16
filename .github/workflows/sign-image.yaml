@@ -36,7 +36,7 @@ jobs:
         with:
           scan-type: 'image'
           format: 'github'
-          output: '/tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          output: 'tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
           image-ref: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}
           github-pat: ${{ secrets.GITHUB_TOKEN }} 
 
@@ -44,7 +44,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
-          path: 'tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          path: '/tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
 
       # - name: Generate SBOM SPDX
       #   # https://github.com/anchore/sbom-action/tree/main
