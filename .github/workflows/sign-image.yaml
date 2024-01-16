@@ -36,7 +36,7 @@ jobs:
         with:
           scan-type: 'image'
           format: 'github'
-          output: 'tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          output: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
           image-ref: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}
           github-pat: ${{ secrets.GITHUB_TOKEN }} 
 
