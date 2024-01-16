@@ -44,7 +44,8 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
-          path: '/tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          path: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          if-no-files-found: error
 
       # - name: Generate SBOM SPDX
       #   # https://github.com/anchore/sbom-action/tree/main
