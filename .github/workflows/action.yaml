@@ -20,6 +20,8 @@ jobs:
     outputs:
       SHA_SHORT: ${{ env.COMMIT_SHORT_SHA }}
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
       - name: Set short git commit SHA
         id: short-sha
         run: |
@@ -28,6 +30,7 @@ jobs:
   build:
     name: build
     uses: ./.github/workflows/docker-build.yaml
+    needs: [prepare]
     with:
       REGISTRY: ghcr.io
       ORGANISATION_NAME: philwelz
@@ -35,6 +38,7 @@ jobs:
   patch:
     name: patch
     uses: ./.github/workflows/patch-image.yaml
+    needs: [prepare,build]
     with:
       REGISTRY: ghcr.io
       ORGANISATION_NAME: philwelz
