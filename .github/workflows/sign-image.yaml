@@ -31,29 +31,45 @@ jobs:
         # https://github.com/sigstore/cosign-installer
         uses: sigstore/cosign-installer@v3.3.0
 
-      - name: Generate SBOM SPDX
-        # https://github.com/anchore/sbom-action/tree/main
-        uses: anchore/sbom-action@v0
+      - name: Run Trivy in GitHub SBOM mode and submit results to Dependency Graph
+        uses: aquasecurity/trivy-action@master
         with:
-          image: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched
-          format: cyclonedx-json
-          artifact-name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.att.json
-          output-file: /tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.att.json
+          scan-type: 'image'
+          format: 'github'
+          output: '/tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          image-ref: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}
+          github-pat: ${{ secrets.GITHUB_TOKEN }} 
 
-      - name: Publish SBOM
-        # https://github.com/anchore/sbom-action/tree/main
-        uses: anchore/sbom-action/publish-sbom@v0
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v3
         with:
-          sbom-artifact-match: ".*\\.att.json$"
+          name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          path: '/tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+
+      # - name: Generate SBOM SPDX
+      #   # https://github.com/anchore/sbom-action/tree/main
+      #   uses: anchore/sbom-action@v0
+      #   with:
+      #     image: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched
+      #     format: spdx
+      #     artifact-name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
+      #     output-file: /tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
+
+      # - name: Publish SBOM
+      #   # https://github.com/anchore/sbom-action/tree/main
+      #   uses: anchore/sbom-action/publish-sbom@v0
+      #   with:
+      #     sbom-artifact-match: ".*\\.spdx$"
      
       - name: Download SBOM artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.att.json
+          name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
 
       - name: Attach SBOM to Image
         run: |
-          cosign attach attestation ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched --attestation ${{ inputs.COMMIT_SHORT_SHA }}-sbom.att.json
+          cosign version
+          cosign attach attestation --attestation ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched
 
       # - name: Docker get image digest
       #   if: steps.login.conclusion == 'success'
