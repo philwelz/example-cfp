@@ -64,6 +64,8 @@ jobs:
           password: ${{ github.token }}
 
       - name: Attach SBOM to Image
+        env:
+          COSIGN_EXPERIMENTAL: 1
         run: |
           cosign attest -predicate ${{ env.SBOM }} ${{ env.IMAGE }} --yes=true
           
