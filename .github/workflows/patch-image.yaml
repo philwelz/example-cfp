@@ -51,6 +51,13 @@ jobs:
           TRIVY_USERNAME: ${{ github.actor }}
           TRIVY_PASSWORD: ${{ github.token }}
 
+      - name: Upload Trivy Report artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: 'trivy-report.json'
+          path: 'report.json'
+          if-no-files-found: error
+
       - name: Check Vuln Count
         id: vuln_count
         run: |
