@@ -43,3 +43,12 @@ jobs:
       REGISTRY: ghcr.io
       ORGANISATION_NAME: philwelz
       COMMIT_SHORT_SHA: ${{ needs.prepare.outputs.SHA_SHORT }}
+  sign:
+    name: sign
+    uses: ./.github/workflows/sign-image.yaml
+    needs: [prepare,build,patch]
+    with:
+      REGISTRY: ghcr.io
+      ORGANISATION_NAME: philwelz
+      COMMIT_SHORT_SHA: ${{ needs.prepare.outputs.SHA_SHORT }}
+    

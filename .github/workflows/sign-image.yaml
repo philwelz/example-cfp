@@ -22,7 +22,7 @@ env:
   ORGANISATION_NAME: philwelz
 
 jobs:
-  patch-image:
+  sign-image:
     runs-on: ubuntu-latest
 
     permissions:
@@ -31,25 +31,32 @@ jobs:
       id-token: write # needed for signing the images with GitHub OIDC Token
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - name: Install Cosign
+        # https://github.com/sigstore/cosign-installer
+        uses: sigstore/cosign-installer@v3.3.0
+      
+      - name: Install syft
+        uses: anchore/sbom-action/download-syft@0
 
-      - name: Set short git commit SHA
-        id: vars
-        run: |
-          calculatedSha=$(git rev-parse --short ${{ github.sha }})
-          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched
+          format: spdx
+          artifact-name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
+          output-file: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
 
-      - name: Docker get image digest
-        if: steps.login.conclusion == 'success'
-        id: image
-        run: |
-          apt-get update && apt-get install -y jq
-          echo "digest=$(docker image inspect ${{ steps.copa.outputs.patched-image }} | jq -r '.[0].RepoDigests[0]')" >> $GITHUB_OUTPUT
 
-      - name: Cosign sign the image with GitHub OIDC Token
-        env:
-          DIGEST: ${{ steps.image.outputs.digest }}
-          TAG: ${{ steps.copa.outputs.patched-image }}
-        run: |
-          cosign sign --yes ${TAG}@${DIGEST}
+      # - name: Docker get image digest
+      #   if: steps.login.conclusion == 'success'
+      #   id: image
+      #   run: |
+      #     apt-get update && apt-get install -y jq
+      #     echo "digest=$(docker image inspect ${{ steps.copa.outputs.patched-image }} | jq -r '.[0].RepoDigests[0]')" >> $GITHUB_OUTPUT
+
+      # - name: Cosign sign the image with GitHub OIDC Token
+      #   env:
+      #     DIGEST: ${{ steps.image.outputs.digest }}
+      #     TAG: ${{ steps.copa.outputs.patched-image }}
+      #   run: |
+      #     cosign sign --yes ${TAG}@${DIGEST}
