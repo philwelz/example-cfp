@@ -30,9 +30,6 @@ jobs:
       - name: Install Cosign
         # https://github.com/sigstore/cosign-installer
         uses: sigstore/cosign-installer@v3.3.0
-      
-      - name: Install syft
-        uses: anchore/sbom-action/download-syft@0
 
       - name: Generate SBOM
         uses: anchore/sbom-action@v0
