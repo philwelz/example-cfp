@@ -16,6 +16,9 @@ on:
         type: string
         required: true
         description: 'The Subscription ID which should be used.'
+env:
+  SBOM: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
+  IMAGE: '${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched'
 
 jobs:
   sign-image:
@@ -49,16 +52,13 @@ jobs:
       - name: Download SBOM artifact
         uses: actions/download-artifact@v3
         with:
-          name: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
-
-      - name: ls
-        run: |
-          ls -la
+          name: '${{ env.SBOM }}'
 
       - name: Attach SBOM to Image
         run: |
-          cosign version
-          cosign attach attestation --attestation ${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched
+          cosign attach sbom --sbom ${{ env.SBOM }} ${{ env.IMAGE }}
+ 
+# cosign attach attestation --attestation ${{ env.SBOM }} ${{ env.IMAGE }}
 
       # - name: Docker get image digest
       #   if: steps.login.conclusion == 'success'

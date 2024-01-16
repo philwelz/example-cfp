@@ -28,3 +28,7 @@ trivy image ghcr.io/philwelz/example:patched
 
 $ cosign verify-attestation --key /path/to/cosign.pub --type cyclonedx <IMAGE> > sbom.cdx.intoto.jsonl
 $ trivy sbom ./sbom.cdx.intoto.jsonl
+
+# URL
+
+https://aquasecurity.github.io/trivy/v0.37/docs/attestation/sbom/

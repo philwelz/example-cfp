@@ -17,6 +17,11 @@ on:
         required: true
         description: 'The Subscription ID which should be used.'
 
+env:
+  SBOM: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
+  IMAGE: '${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}'
+  TAG: '${{ inputs.COMMIT_SHORT_SHA }}-patched'
+
 jobs:
   patch-image:
     runs-on: ubuntu-latest
@@ -40,7 +45,7 @@ jobs:
           output: 'report.json'
           ignore-unfixed: true
           vuln-type: 'os'
-          image-ref: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}
+          image-ref: ${{ env.IMAGE }}
         # needed for private repos
         env:
           TRIVY_USERNAME: ${{ github.actor }}
@@ -59,9 +64,9 @@ jobs:
         # https://github.com/project-copacetic/copa-action
         uses: project-copacetic/copa-action@v1.0.1
         with:
-          image: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}
+          image: ${{ env.IMAGE }}
           image-report: 'report.json'
-          patched-tag: '${{ inputs.COMMIT_SHORT_SHA }}-patched'
+          patched-tag: ${{ env.TAG }}
           # https://github.com/moby/buildkit
           buildkit-version: 'v0.12.4'
           # https://github.com/project-copacetic/copacetic
@@ -87,13 +92,13 @@ jobs:
         with:
           scan-type: 'image'
           format: 'github'
-          output: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
+          output: ${{ env.SBOM }}
           image-ref: ${{ steps.copa.outputs.patched-image }}
           #github-pat: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v3
         with:
-          name: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
-          path: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
+          name: ${{ env.SBOM }}
+          path: ${{ env.SBOM }}
           if-no-files-found: error
