@@ -50,3 +50,19 @@ jobs:
           file: ./example/Dockerfile
           build-args: VERSION_FOLDER=fred-version
           tags: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}
+
+      - name: Run Trivy in SBOM mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          format: 'github'
+          output: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          image-ref: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}
+          #github-pat: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          path: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          if-no-files-found: error

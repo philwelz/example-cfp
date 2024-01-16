@@ -82,10 +82,18 @@ jobs:
         run: |
           docker push ${{ steps.copa.outputs.patched-image }}
 
-      # - name: Cosign sign the image with GitHub OIDC Token
-      #   env:
-      #     DIGEST: ${{ steps.push.outputs.digest }}
-      #     TAG: ${{ steps.copa.outputs.patched-image }}
-      #   run: |
-      #     cosign attach sbom --sbom latest.spdx ${TAG}@${DIGEST}
+      - name: Run Trivy in SBOM mode
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          format: 'github'
+          output: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
+          image-ref: ${{ steps.copa.outputs.patched-image }}
+          #github-pat: ${{ secrets.GITHUB_TOKEN }} 
 
+      - name: Upload SBOM artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
+          path: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
+          if-no-files-found: error
