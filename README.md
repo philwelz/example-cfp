@@ -29,6 +29,22 @@ trivy image ghcr.io/philwelz/example:patched
 $ cosign verify-attestation --key /path/to/cosign.pub --type cyclonedx <IMAGE> > sbom.cdx.intoto.jsonl
 $ trivy sbom ./sbom.cdx.intoto.jsonl
 
+# SBOM
+trivy image ghcr.io/philwelz/example:898a37d-patched  --ignore-unfixed
+trivy image ghcr.io/philwelz/example:898a37d --ignore-unfixed 
+
+syft ghcr.io/philwelz/example:898a37d-patched
+syft ghcr.io/philwelz/example:898a37d 
+
+grype ghcr.io/philwelz/example:898a37d-patched  --scope all-layers --only-fixed
+grype ghcr.io/philwelz/example:898a37d  --scope all-layers --only-fixed
+
+trivy image ghcr.io/philwelz/example:898a37d-patched
+
 # URL
 
-https://aquasecurity.github.io/trivy/v0.37/docs/attestation/sbom/
+- https://project-copacetic.github.io/copacetic/website/github-action
+- https://aquasecurity.github.io/trivy/v0.37/docs/attestation/sbom/
+
+
+trivy image --ignore-unfixed ghcr.io/philwelz/example:898a37d-o result.json
