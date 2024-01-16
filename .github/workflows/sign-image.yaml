@@ -73,11 +73,8 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
-      - name: Attach SBOM to Image
+      - name: Attach & sign SBOM 
         run: cosign attest --yes -predicate ${{ env.SBOM }} ${{ env.IMAGE }} --type=cyclonedx
-
-      - name: Sign SBOM
-        run: cosign sign --yes '${{ env.GHCR }}@${{ steps.crane.outputs.DIGEST }}.att'
 
       - name: Sign the OCI artifact
         run: cosign sign --yes '${{ env.GHCR }}@${{ steps.crane.outputs.DIGEST }}'
