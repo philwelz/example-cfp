@@ -43,7 +43,7 @@ jobs:
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v3
         with:
-          name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          name: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
           path: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
           if-no-files-found: error
 
@@ -65,7 +65,7 @@ jobs:
       - name: Download SBOM artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          name: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
 
       - name: Attach SBOM to Image
         run: |
