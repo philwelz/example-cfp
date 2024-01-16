@@ -51,10 +51,9 @@ jobs:
         with:
           name: '${{ inputs.COMMIT_SHORT_SHA }}-patched-sbom.cdx.json'
 
-      - name: Unzip artifact
+      - name: ls
         run: |
-          unzip ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json.zip
-          rm ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json.zip
+          ls -la
 
       - name: Attach SBOM to Image
         run: |
