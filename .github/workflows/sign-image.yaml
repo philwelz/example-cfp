@@ -53,7 +53,7 @@ jobs:
 
       - name: Attach SBOM to Image
         run: |
-          cosign attach sbom --sbom ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched
+          cosign attach attestation ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched --attestation ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
 
       # - name: Docker get image digest
       #   if: steps.login.conclusion == 'success'
