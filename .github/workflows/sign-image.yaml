@@ -17,10 +17,6 @@ on:
         required: true
         description: 'The Subscription ID which should be used.'
 
-env:
-  REGISTRY: ghcr.io
-  ORGANISATION_NAME: philwelz
-
 jobs:
   sign-image:
     runs-on: ubuntu-latest
