@@ -48,3 +48,20 @@ trivy image ghcr.io/philwelz/example:898a37d-patched
 
 
 trivy image --ignore-unfixed ghcr.io/philwelz/example:898a37d-o result.json
+
+# Verify
+
+```bash
+
+
+cosign verify-attestation ghcr.io/philwelz/example:2ec37e9-patched
+cosign verify-attestation sha256-fe3b8987ff01c5ab6d979b5e18c30591ad2ace3515699b2e67c51581a411a009.att
+
+#View SBOM
+IMAGE=ghcr.io/philwelz/example:2ec37e9-patched
+syft $IMAGE
+INDEX=64155516 && rekor-cli get --rekor_server https://rekor.sigstore.dev --log-index $INDEX --format json | jq
+crane digest $IMAGE
+crane ls ghcr.io/philwelz/example | head
+
+```
