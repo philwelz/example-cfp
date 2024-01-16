@@ -65,7 +65,12 @@ jobs:
       - name: Download SBOM artifact
         uses: actions/download-artifact@v3
         with:
-          name: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json'
+          name: '${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json.zip'
+
+      - name: Unzip artifact
+        run: |
+          unzip ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json.zip
+          rm ${{ inputs.COMMIT_SHORT_SHA }}-sbom.cdx.json.zip
 
       - name: Attach SBOM to Image
         run: |
