@@ -36,24 +36,24 @@ jobs:
         uses: anchore/sbom-action@v0
         with:
           image: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched
-          format: spdx-json
-          artifact-name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx.json
-          output-file: /tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx.json
+          format: cyclonedx-json
+          artifact-name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.att.json
+          output-file: /tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.att.json
 
       - name: Publish SBOM
         # https://github.com/anchore/sbom-action/tree/main
         uses: anchore/sbom-action/publish-sbom@v0
         with:
-          sbom-artifact-match: ".*\\.spdx.json$"
+          sbom-artifact-match: ".*\\.att.json$"
      
       - name: Download SBOM artifact
         uses: actions/download-artifact@v3
         with:
-          name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx.json
+          name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.att.json
 
       - name: Attach SBOM to Image
         run: |
-          cosign attach attestation ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched --attestation ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx.json
+          cosign attach attestation ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched --attestation ${{ inputs.COMMIT_SHORT_SHA }}-sbom.att.json
 
       # - name: Docker get image digest
       #   if: steps.login.conclusion == 'success'
