@@ -65,7 +65,7 @@ jobs:
 
       - name: Attach SBOM to Image
         run: |
-          cosign attest -predicate ${{ env.SBOM }} ${{ env.IMAGE }}
+          cosign attest -predicate ${{ env.SBOM }} ${{ env.IMAGE }} --yes=true
           
 #cosign attach sbom --sbom ${{ env.SBOM }} ${{ env.IMAGE }}
  
