@@ -37,8 +37,19 @@ jobs:
           image: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched
           format: spdx
           artifact-name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
-          output-file: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
+          output-file: /tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
 
+      - name: Publish SBOM
+        uses: anchore/sbom-action/publish-sbom@v0
+        with:
+          sbom-artifact-match: ".*\\.spdx$"
+
+      - name: 'Upload SBOM'
+        uses: actions/upload-artifact@v3
+        with:
+          name: /tmp/
+          path: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
+          retention-days: 5
 
       # - name: Docker get image digest
       #   if: steps.login.conclusion == 'success'
