@@ -1,15 +1,21 @@
 name: Build & Publish to Registry
 
 on:
-  workflow_dispatch:
-  push:
-    paths:
-      - 'example/**'
-      - '!.github/**'
-
-env:
-  REGISTRY: ghcr.io
-  ORGANISATION_NAME: philwelz
+  workflow_call:
+    inputs:
+      ### Values from CICD Workflow ###
+      REGISTRY:
+        required: true
+        type: string
+        description: 'The Environemnt which should be used.'
+      ORGANISATION_NAME:
+        type: string
+        required: true
+        description: 'The Subscription ID which should be used.'
+      COMMIT_SHORT_SHA:
+        type: string
+        required: true
+        description: 'The Subscription ID which should be used.'
 
 jobs:
   docker-build:
@@ -18,12 +24,6 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
-
-      - name: Set short git commit SHA
-        id: vars
-        run: |
-          calculatedSha=$(git rev-parse --short ${{ github.sha }})
-          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
 
       - name: Set up Docker Buildx
         id: buildx
@@ -34,7 +34,7 @@ jobs:
         # https://github.com/docker/login-action
         uses: docker/login-action@v3.0.0
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ inputs.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
@@ -49,4 +49,4 @@ jobs:
           context: ./example
           file: ./example/Dockerfile
           build-args: VERSION_FOLDER=fred-version
-          tags: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.COMMIT_SHORT_SHA }}
+          tags: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}

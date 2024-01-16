@@ -1,0 +1,55 @@
+name: Sign Image & SBOM
+
+on:
+  workflow_call:
+    inputs:
+      ### Values from CICD Workflow ###
+      REGISTRY:
+        required: true
+        type: string
+        description: 'The Environemnt which should be used.'
+      ORGANISATION_NAME:
+        type: string
+        required: true
+        description: 'The Subscription ID which should be used.'
+      COMMIT_SHORT_SHA:
+        type: string
+        required: true
+        description: 'The Subscription ID which should be used.'
+
+env:
+  REGISTRY: ghcr.io
+  ORGANISATION_NAME: philwelz
+
+jobs:
+  patch-image:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read 
+      packages: write # needed for publishing the patched image to the GitHub Container Registry
+      id-token: write # needed for signing the images with GitHub OIDC Token
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
+
+      - name: Docker get image digest
+        if: steps.login.conclusion == 'success'
+        id: image
+        run: |
+          apt-get update && apt-get install -y jq
+          echo "digest=$(docker image inspect ${{ steps.copa.outputs.patched-image }} | jq -r '.[0].RepoDigests[0]')" >> $GITHUB_OUTPUT
+
+      - name: Cosign sign the image with GitHub OIDC Token
+        env:
+          DIGEST: ${{ steps.image.outputs.digest }}
+          TAG: ${{ steps.copa.outputs.patched-image }}
+        run: |
+          cosign sign --yes ${TAG}@${DIGEST}

@@ -1,13 +1,21 @@
-name: Patch & Publish to Registry
+name: Build & Publish to Registry
 
 on:
-  workflow_dispatch:
-  registry_package:
-    types: [published]
-
-env:
-  REGISTRY: ghcr.io
-  ORGANISATION_NAME: philwelz
+  workflow_call:
+    inputs:
+      ### Values from CICD Workflow ###
+      REGISTRY:
+        required: true
+        type: string
+        description: 'The Environemnt which should be used.'
+      ORGANISATION_NAME:
+        type: string
+        required: true
+        description: 'The Subscription ID which should be used.'
+      COMMIT_SHORT_SHA:
+        type: string
+        required: true
+        description: 'The Subscription ID which should be used.'
 
 jobs:
   patch-image:
@@ -19,15 +27,6 @@ jobs:
       id-token: write # needed for signing the images with GitHub OIDC Token
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
-
-      - name: Set short git commit SHA
-        id: vars
-        run: |
-          calculatedSha=$(git rev-parse --short ${{ github.sha }})
-          echo "COMMIT_SHORT_SHA=$calculatedSha" >> $GITHUB_ENV
-
       - name: Install Cosign
         # https://github.com/sigstore/cosign-installer
         uses: sigstore/cosign-installer@v3.3.0
@@ -46,7 +45,7 @@ jobs:
           output: 'report.json'
           ignore-unfixed: true
           vuln-type: 'os'
-          image-ref: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.COMMIT_SHORT_SHA }}
+          image-ref: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}
         # needed for private repos
         env:
           TRIVY_USERNAME: ${{ github.actor }}
@@ -65,9 +64,9 @@ jobs:
         # https://github.com/project-copacetic/copa-action
         uses: project-copacetic/copa-action@v1.0.1
         with:
-          image: ${{ env.REGISTRY }}/${{ env.ORGANISATION_NAME }}/example:${{ env.COMMIT_SHORT_SHA }}
+          image: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}
           image-report: 'report.json'
-          patched-tag: '${{ env.COMMIT_SHORT_SHA }}-patched'
+          patched-tag: '${{ inputs.COMMIT_SHORT_SHA }}-patched'
           # https://github.com/moby/buildkit
           buildkit-version: 'v0.12.4'
           # https://github.com/project-copacetic/copacetic
@@ -78,7 +77,7 @@ jobs:
         id: login
         uses: docker/login-action@v3.0.0
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ inputs.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ github.token }}
 
@@ -87,20 +86,6 @@ jobs:
         id: push
         run: |
           docker push ${{ steps.copa.outputs.patched-image }}
-
-      - name: Docker get image digest
-        if: steps.login.conclusion == 'success'
-        id: image
-        run: |
-          apt-get update && apt-get install -y jq
-          echo "digest=$(docker image inspect ${{ steps.copa.outputs.patched-image }} | jq -r '.[0].RepoDigests[0]')" >> $GITHUB_OUTPUT
-
-      - name: Cosign sign the image with GitHub OIDC Token
-        env:
-          DIGEST: ${{ steps.image.outputs.digest }}
-          TAG: ${{ steps.copa.outputs.patched-image }}
-        run: |
-          cosign sign --yes ${TAG}@${DIGEST}
 
       # - name: Cosign sign the image with GitHub OIDC Token
       #   env:
