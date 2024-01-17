@@ -52,16 +52,32 @@ trivy image --ignore-unfixed ghcr.io/philwelz/example:898a37d-o result.json
 # Verify
 
 ```bash
+# General
+INDEX_SBOM=64155516
+INDEX_IMAGE=64167434
+IMAGE=ghcr.io/philwelz/example:24bb1e3-patched
+SHA=24bb1e31f3f0762ab65f9cd48c01ee7510fb11d1
 
-
-cosign verify-attestation ghcr.io/philwelz/example:2ec37e9-patched
-cosign verify-attestation sha256-fe3b8987ff01c5ab6d979b5e18c30591ad2ace3515699b2e67c51581a411a009.att
-
-#View SBOM
-IMAGE=ghcr.io/philwelz/example:2ec37e9-patched
+# View SBOM signing on transparency log
+rekor-cli get --rekor_server https://rekor.sigstore.dev --log-index $INDEX_SBOM --format json | jq
+# View SBOM with cosign
+cosign download attestation $IMAGE | jq -r .payload | base64 -d | jq .
+# View SBOM with syft
 syft $IMAGE
-INDEX=64155516 && rekor-cli get --rekor_server https://rekor.sigstore.dev --log-index $INDEX --format json | jq
+# no SBOM on unpatched image
+syft ${IMAGE:0:32}
+# Verify SBOM signing
+cosign verify-attestation $IMAGE --type cyclonedx --certificate-identity "https://github.com/philwelz/example-cfp/.github/workflows/sign-image.yaml@refs/heads/main" --certificate-oidc-issuer "https://token.actions.githubusercontent.com" | jq .
+
+
+# View OCI Image signing on transparency log
+rekor-cli get --rekor_server https://rekor.sigstore.dev --log-index $INDEX_IMAGE --format json | jq
+# Get image digest
 crane digest $IMAGE
 crane ls ghcr.io/philwelz/example | head
 
+# Verify signing - short
+cosign verify $IMAGE --certificate-identity "https://github.com/philwelz/example-cfp/.github/workflows/sign-image.yaml@refs/heads/main" --certificate-oidc-issuer "https://token.actions.githubusercontent.com" | jq .
+# Verify signing - detailed
+cosign verify $IMAGE --certificate-identity='https://github.com/philwelz/example-cfp/.github/workflows/sign-image.yaml@refs/heads/main' --certificate-oidc-issuer="https://token.actions.githubusercontent.com" --certificate-github-workflow-name='Action' --certificate-github-workflow-ref='refs/heads/main' --certificate-github-workflow-repository='philwelz/example-cfp'  --certificate-github-workflow-sha=$SHA --certificate-github-workflow-trigger='workflow_dispatch' | jq .
 ```
