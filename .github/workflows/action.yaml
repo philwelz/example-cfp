@@ -21,8 +21,10 @@ jobs:
   prepare:
     name: prepare
     runs-on: ubuntu-latest
-    # outputs:
-    #   SHA_SHORT: ${{ env.COMMIT_SHORT_SHA }}
+    outputs:
+      SHA_SHORT: ${{ env.COMMIT_SHORT_SHA }}
+      REGISTRY: ${{ env.REGISTRY }}
+      ORGANISATION_NAME: ${{ env.ORGANISATION_NAME }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -36,23 +38,23 @@ jobs:
     uses: ./.github/workflows/docker-build.yaml
     needs: [prepare]
     with:
-      REGISTRY: ${{ env.REGISTRY }}
-      ORGANISATION_NAME: ${{ env.ORGANISATION_NAME }}
-      COMMIT_SHORT_SHA: ${{ env.COMMIT_SHORT_SHA }}
+      REGISTRY: ${{ needs.prepare.outputs.REGISTRY }}
+      ORGANISATION_NAME: ${{ needs.prepare.outputs.ORGANISATION_NAME }}
+      COMMIT_SHORT_SHA: ${{ needs.prepare.outputs.SHA_SHORT }}
   patch:
     name: patch
     uses: ./.github/workflows/patch-image.yaml
     needs: [prepare,build]
     with:
-      REGISTRY: ${{ env.REGISTRY }}
-      ORGANISATION_NAME: ${{ env.ORGANISATION_NAME }}
-      COMMIT_SHORT_SHA: ${{ env.COMMIT_SHORT_SHA }}
+      REGISTRY: ${{ needs.prepare.outputs.REGISTRY }}
+      ORGANISATION_NAME: ${{ needs.prepare.outputs.ORGANISATION_NAME }}
+      COMMIT_SHORT_SHA: ${{ needs.prepare.outputs.SHA_SHORT }}
   sign:
     name: sign
     uses: ./.github/workflows/sign-image.yaml
     needs: [prepare,build,patch]
     with:
-      REGISTRY: ${{ env.REGISTRY }}
-      ORGANISATION_NAME: ${{ env.ORGANISATION_NAME }}
-      COMMIT_SHORT_SHA: ${{ env.COMMIT_SHORT_SHA }}
+      REGISTRY: ${{ needs.prepare.outputs.REGISTRY }}
+      ORGANISATION_NAME: ${{ needs.prepare.outputs.ORGANISATION_NAME }}
+      COMMIT_SHORT_SHA: ${{ needs.prepare.outputs.SHA_SHORT }}
     
