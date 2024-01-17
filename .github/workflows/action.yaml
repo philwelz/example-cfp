@@ -13,12 +13,16 @@ defaults:
     working-directory: ./
     shell: bash
 
+env:
+  REGISTRY: ghcr.io
+  ORGANISATION_NAME: philwelz
+
 jobs:
   prepare:
     name: prepare
     runs-on: ubuntu-latest
-    outputs:
-      SHA_SHORT: ${{ env.COMMIT_SHORT_SHA }}
+    # outputs:
+    #   SHA_SHORT: ${{ env.COMMIT_SHORT_SHA }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -32,23 +36,23 @@ jobs:
     uses: ./.github/workflows/docker-build.yaml
     needs: [prepare]
     with:
-      REGISTRY: ghcr.io
-      ORGANISATION_NAME: philwelz
-      COMMIT_SHORT_SHA: ${{ needs.prepare.outputs.SHA_SHORT }}
+      REGISTRY: ${{ env.REGISTRY }}
+      ORGANISATION_NAME: ${{ env.ORGANISATION_NAME }}
+      COMMIT_SHORT_SHA: ${{ env.COMMIT_SHORT_SHA }}
   patch:
     name: patch
     uses: ./.github/workflows/patch-image.yaml
     needs: [prepare,build]
     with:
-      REGISTRY: ghcr.io
-      ORGANISATION_NAME: philwelz
-      COMMIT_SHORT_SHA: ${{ needs.prepare.outputs.SHA_SHORT }}
+      REGISTRY: ${{ env.REGISTRY }}
+      ORGANISATION_NAME: ${{ env.ORGANISATION_NAME }}
+      COMMIT_SHORT_SHA: ${{ env.COMMIT_SHORT_SHA }}
   sign:
     name: sign
     uses: ./.github/workflows/sign-image.yaml
     needs: [prepare,build,patch]
     with:
-      REGISTRY: ghcr.io
-      ORGANISATION_NAME: philwelz
-      COMMIT_SHORT_SHA: ${{ needs.prepare.outputs.SHA_SHORT }}
+      REGISTRY: ${{ env.REGISTRY }}
+      ORGANISATION_NAME: ${{ env.ORGANISATION_NAME }}
+      COMMIT_SHORT_SHA: ${{ env.COMMIT_SHORT_SHA }}
     
