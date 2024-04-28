@@ -27,7 +27,7 @@ jobs:
       ORGANISATION_NAME: ${{ env.ORGANISATION_NAME }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set short git commit SHA
         id: short-sha
         run: |
