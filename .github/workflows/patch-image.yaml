@@ -69,7 +69,7 @@ jobs:
         if: steps.vuln_count.outputs.vuln_count != '0'
         id: copa
         # https://github.com/project-copacetic/copa-action
-        uses: project-copacetic/copa-action@v1.1.0
+        uses: project-copacetic/copa-action@v1.2.1
         with:
           image: ${{ env.IMAGE }}
           image-report: 'report.json'
