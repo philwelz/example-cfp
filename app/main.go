@@ -25,6 +25,5 @@ func main() {
 	router := gin.Default()
 	router.GET("/", getTitles)
 
-	// Run the server
 	router.Run("localhost:8080")
 }
