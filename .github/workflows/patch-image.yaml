@@ -52,7 +52,7 @@ jobs:
           TRIVY_PASSWORD: ${{ github.token }}
 
       - name: Upload Trivy Report artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: 'trivy-report.json'
           path: 'report.json'
@@ -104,7 +104,7 @@ jobs:
           #github-pat: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Upload SBOM artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.SBOM }}
           path: ${{ env.SBOM }}
