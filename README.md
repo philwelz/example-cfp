@@ -2,6 +2,8 @@ docker buildx build --platform linux/arm64 ./example -t test:fred
 
 docker run -dp 8080:8080 test:fred
 
+docker run -dp 8080:8080 main:test
+
 trivy image --vuln-type os test:fred-arm64 
 
 trivy image --ignore-unfixed test:fred-arm64
