@@ -5,8 +5,6 @@ VisualStudioVersion = 17.5.002.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sample-api", "sample-api.csproj", "{B3E854BE-962F-4D6D-A4C7-D57CF7555BCA}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "sample-api.Tests", "sample-api.Tests\sample-api.Tests.csproj", "{130F0F32-1C59-42CC-8E27-E52B6C3C4FFB}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
