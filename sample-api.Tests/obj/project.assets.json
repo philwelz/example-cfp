@@ -5993,11 +5993,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "/Users/nico/Downloads/example-cfp/app/sample-api.Tests/sample-api.Tests.csproj",
+      "projectUniqueName": "/Users/nico/Downloads/example-cfp/sample-api.Tests/sample-api.Tests.csproj",
       "projectName": "sample-api.Tests",
-      "projectPath": "/Users/nico/Downloads/example-cfp/app/sample-api.Tests/sample-api.Tests.csproj",
+      "projectPath": "/Users/nico/Downloads/example-cfp/sample-api.Tests/sample-api.Tests.csproj",
       "packagesPath": "/Users/nico/.nuget/packages/",
-      "outputPath": "/Users/nico/Downloads/example-cfp/app/sample-api.Tests/obj/",
+      "outputPath": "/Users/nico/Downloads/example-cfp/sample-api.Tests/obj/",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "/Users/nico/.nuget/NuGet/NuGet.Config"
@@ -6012,8 +6012,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "/Users/nico/Downloads/example-cfp/app/sample-api.csproj": {
-              "projectPath": "/Users/nico/Downloads/example-cfp/app/sample-api.csproj"
+            "/Users/nico/Downloads/example-cfp/sample-api.csproj": {
+              "projectPath": "/Users/nico/Downloads/example-cfp/sample-api.csproj"
             }
           }
         }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "/zKgMXQzZxSr/dXF6M5L86DhhSFusNw9cwrD84aYWuXm146q61zMjp9iyiqCVwP13cNKVnpV696Zkr7ux87NqA==",
+  "dgSpecHash": "Xjf6aAeSJjZmFoyn21/PCfSZK+H2yoWVorDQUKCpT9JxJ7dgbo9Kb/iEE4YaBx3Ji2IvtXGvIw4hSQ0fbCOppQ==",
   "success": true,
-  "projectFilePath": "/Users/nico/Downloads/example-cfp/app/sample-api.Tests/sample-api.Tests.csproj",
+  "projectFilePath": "/Users/nico/Downloads/example-cfp/sample-api.Tests/sample-api.Tests.csproj",
   "expectedPackageFiles": [
     "/Users/nico/.nuget/packages/coverlet.collector/6.0.0/coverlet.collector.6.0.0.nupkg.sha512",
     "/Users/nico/.nuget/packages/microsoft.aspnetcore.openapi/8.0.4/microsoft.aspnetcore.openapi.8.0.4.nupkg.sha512",
