@@ -1,16 +1,13 @@
-# Stage 1: Builder
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /source
 
-FROM golang:alpine AS builder
+COPY . .
+RUN dotnet publish -o /app
+
+
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
 WORKDIR /app
-COPY ./app/* .
-RUN go build -o main
+COPY --from=build /app .
 
-# Stage 2: Final Image
-
-FROM alpine:3.12
-# hadolint ignore=DL3018
-RUN apk --no-cache add ca-certificates
-WORKDIR /app
-COPY --from=builder /app/main /app/
-EXPOSE 8080 
-ENTRYPOINT ["/app/main"]
+USER $APP_UID 
+ENTRYPOINT ["./sample-api"]
