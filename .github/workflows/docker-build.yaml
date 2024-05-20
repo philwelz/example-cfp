@@ -86,7 +86,7 @@ jobs:
           output: trivy.md
 
       - name: Comment PR
-        uses: fuzzbuzz/pr-comment@1.0.4
+        uses: fuzzbuzz/pr-comment@master
         if: github.event_name == 'pull_request'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
