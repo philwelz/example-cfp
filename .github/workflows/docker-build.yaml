@@ -57,7 +57,6 @@ jobs:
           sbom: false
           context: ./
           file: ./Dockerfile
-          build-args: VERSION_FOLDER=fred-version
           tags: ${{ env.IMAGE }}
 
       - name: Run Trivy in SBOM mode
