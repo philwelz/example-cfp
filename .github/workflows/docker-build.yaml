@@ -91,7 +91,9 @@ jobs:
               echo "### Security SBOM Output"
               echo "<details><summary>Click to expand</summary>"
               echo ""
+              #echo '```'
               cat trivy.md
+              echo '```'
               echo "</details>"
             } >> $GITHUB_STEP_SUMMARY
           fi
