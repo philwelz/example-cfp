@@ -101,6 +101,7 @@ jobs:
           format: 'github'
           output: ${{ env.SBOM }}
           image-ref: ${{ steps.copa.outputs.patched-image }}
+          github-pat: ${{ github.token }}
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
