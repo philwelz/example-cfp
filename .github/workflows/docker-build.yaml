@@ -91,7 +91,7 @@ jobs:
               echo "### Security SBOM Output"
               echo "<details><summary>Click to expand</summary>"
               echo ""
-              #echo '```'
+              echo '```'
               cat trivy.md
               echo '```'
               echo "</details>"
