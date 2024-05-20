@@ -1,10 +1,12 @@
-name: Action
+name: Build and Release
 
 on:
   workflow_dispatch:
   push:
     branches:
       - main
+  pull_request:
+    branches: [ "main" ]
 
 defaults:
   run:
@@ -42,6 +44,7 @@ jobs:
   patch:
     name: patch
     uses: ./.github/workflows/patch-image.yaml
+    if: github.event_name != 'pull_request'
     needs: [prepare,build]
     with:
       REGISTRY: ${{ needs.prepare.outputs.REGISTRY }}
@@ -50,6 +53,7 @@ jobs:
   sign:
     name: sign
     uses: ./.github/workflows/sign-image.yaml
+    if: github.event_name != 'pull_request'
     needs: [prepare,build,patch]
     with:
       REGISTRY: ${{ needs.prepare.outputs.REGISTRY }}
