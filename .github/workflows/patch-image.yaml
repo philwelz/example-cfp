@@ -27,7 +27,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read 
+      contents: read
       packages: write # needed for publishing the patched image to the GitHub Container Registry
 
     steps:
@@ -101,7 +101,6 @@ jobs:
           format: 'github'
           output: ${{ env.SBOM }}
           image-ref: ${{ steps.copa.outputs.patched-image }}
-          #github-pat: ${{ secrets.GITHUB_TOKEN }} 
 
       - name: Upload SBOM artifact
         uses: actions/upload-artifact@v4
@@ -109,3 +108,26 @@ jobs:
           name: ${{ env.SBOM }}
           path: ${{ env.SBOM }}
           if-no-files-found: error
+
+      - name: Run Trivy scanner in SBOM mode (Output)
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'image'
+          format: 'table'
+          hide-progress: true
+          image-ref: ${{ steps.copa.outputs.patched-image }}
+          output: trivy-patched.md
+
+      - name: Publish Trivy Output to Summary
+        run: |
+          if [[ -s trivy-patched.md ]]; then
+            {
+              echo "### Patched SBOM Output"
+              echo "<details><summary>Click to expand</summary>"
+              echo ""
+              echo '```'
+              cat trivy-patched.md
+              echo '```'
+              echo "</details>"
+            } >> $GITHUB_STEP_SUMMARY
+          fi

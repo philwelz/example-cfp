@@ -35,30 +35,15 @@ jobs:
         # https://github.com/sigstore/cosign-installer
         uses: sigstore/cosign-installer@v3.5.0
 
-      # Install Crane
-        # https://github.com/imjasonh/setup-crane
-      - uses: imjasonh/setup-crane@v0.3
+      - name: Install Crane
+      # https://github.com/imjasonh/setup-crane
+        uses: imjasonh/setup-crane@v0.3
 
       - name: Get Digest
         id: crane
         run: |
           DIGEST=$(crane digest ${{ env.IMAGE }})
           echo "DIGEST=$DIGEST" >> $GITHUB_OUTPUT
-
-      # - name: Generate SBOM SPDX
-      #   # https://github.com/anchore/sbom-action/tree/main
-      #   uses: anchore/sbom-action@v0
-      #   with:
-      #     image: ${{ inputs.REGISTRY }}/${{ inputs.ORGANISATION_NAME }}/example:${{ inputs.COMMIT_SHORT_SHA }}-patched
-      #     format: spdx
-      #     artifact-name: ${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
-      #     output-file: /tmp/${{ inputs.COMMIT_SHORT_SHA }}-sbom.spdx
-
-      # - name: Publish SBOM
-      #   # https://github.com/anchore/sbom-action/tree/main
-      #   uses: anchore/sbom-action/publish-sbom@v0
-      #   with:
-      #     sbom-artifact-match: ".*\\.spdx$"
      
       - name: Download SBOM artifact
         uses: actions/download-artifact@v4
@@ -78,17 +63,3 @@ jobs:
 
       - name: Sign the OCI artifact
         run: cosign sign --yes '${{ env.GHCR }}@${{ steps.crane.outputs.DIGEST }}'
-
-      # - name: Docker get image digest
-      #   if: steps.login.conclusion == 'success'
-      #   id: image
-      #   run: |
-      #     apt-get update && apt-get install -y jq
-      #     echo "digest=$(docker image inspect ${{ steps.copa.outputs.patched-image }} | jq -r '.[0].RepoDigests[0]')" >> $GITHUB_OUTPUT
-
-      # - name: Cosign sign the image with GitHub OIDC Token
-      #   env:
-      #     DIGEST: ${{ steps.image.outputs.digest }}
-      #     TAG: ${{ steps.copa.outputs.patched-image }}
-      #   run: |
-      #     cosign sign --yes ${TAG}@${DIGEST}
