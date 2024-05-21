@@ -5,7 +5,7 @@ COPY . .
 RUN dotnet publish -o /app
 
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
 COPY --from=build /app .
 
